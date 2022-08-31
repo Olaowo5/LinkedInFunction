@@ -26,7 +26,7 @@ namespace CrawlerApp
 
             string RequestBody = await new StreamReader(req.Body).ReadToEndAsync();
 
-            string[] TheResult = await CrawlBlog(RandomInt(7),RequestBody);
+            string[] TheResult = await CrawlBlog(RandomInt(11),RequestBody);
 
             string FstResult = TheResult[0]; string SndResult = TheResult[1];
             string TrdResult = TheResult[2]; string FthResult = TheResult[3];
@@ -46,7 +46,7 @@ namespace CrawlerApp
         {
             Random randy = new Random();
 
-            int RandNum = randy.Next(0, 7);
+            int RandNum = randy.Next(0, Mxn);
 
             return RandNum;
         }
@@ -91,6 +91,24 @@ namespace CrawlerApp
             {
                 Url = "https://reliance.systems/news-update/";
             }
+            else if (BlogPicker == 7)
+            {
+                Url = "https://www.upgrad.com/blog/full-stack-development/";
+            }
+            else if (BlogPicker == 8)
+            {
+                Url = "https://parveensingh.com/";
+                Console.WriteLine("Hacker rank");
+            }
+            else if (BlogPicker == 9)
+            {
+                Url = "https://iximiuz.com/en/";
+
+            }
+            else if (BlogPicker == 10)
+            {
+                Url = "https://www.thorsten-hans.com/";
+            }
             else
             {
                 TheResult[0] = "Failure";
@@ -121,22 +139,34 @@ namespace CrawlerApp
                         //    Console.WriteLine($"The Div {divs.Count} \n");
 
                         var products = htmlDocument.DocumentNode.SelectNodes("//div[@class='grid-desc']");
-                       // Console.WriteLine($"The Div {products.Count} \n");
+                        Console.WriteLine($"The Div {products.Count} \n");
+
+                        List<string> ImgList = new List<string>()
+                        { "https://www.serverless360.com/wp-content/uploads/2022/04/MicrosoftTeams-image-228.png",
+                            "https://www.serverless360.com/wp-content/uploads/2019/03/serverless360-blog-01.png",
+                            "https://www.serverless360.com/wp-content/uploads/2022/08/MicrosoftTeams-image-308.png",
+                            "https://pbs.twimg.com/media/FaQ_otFUIAARXVc.jpg",
+                            "https://external-preview.redd.it/8O12XMlg6pH_-Nw3lva_6KckGqHE0MouWMO3jp5-Yoo.jpg?width=640&crop=smart&auto=webp&s=16fc1bb1b9020ee36d7841c544da2796d0f54666"};
+
 
                         foreach (var divo in products)
                         {
+                            Random randy = new Random();
+                            int randum = randy.Next(ImgList.Count);
+                            var ImgTest = ImgList[randum];
+
                             var Blogo = new BlogStat
                             {
                                 Summary = divo.SelectSingleNode(".//p[@class='pb-3']").InnerText,
                                 Title = divo.SelectSingleNode(".//h4/a").ChildAttributes("title").FirstOrDefault().Value,
                                 Link = divo.SelectSingleNode(".//h4/a").ChildAttributes("href").FirstOrDefault().Value,
                                 //tried to get from img src but woulkd return in base 64
-                                Img = "https://www.serverless360.com/wp-content/uploads/2022/04/MicrosoftTeams-image-228.png"
+                                Img = ImgTest
                             };
                             Blog.Add(Blogo);
                         }
 
-                       
+                   
 
                         break;
                     }
@@ -163,21 +193,40 @@ namespace CrawlerApp
                 case 2:
                     {
 
-                        var products = htmlDocument.DocumentNode.SelectNodes("//div[@class='column large-4']");
+                        var products = htmlDocument.DocumentNode.SelectNodes("//div[@class='row column blog-posts']/article");
                         Console.WriteLine($"The Div {products.Count} \n");
+
+                        List<string> ImgList = new List<string>()
+                        { "https://daxg39y63pxwu.cloudfront.net/images/blog/microsoft-azure-projects-ideas-for-beginners-for-learning/Microsoft_Azure_Projects.png",
+                            "https://techcommunity.microsoft.com/t5/image/serverpage/image-id/382451iDE25F4EFC4A8DCC2/image-dimensions/665x374?v=v2",
+                            "https://ccbtechnology.com/wp-content/uploads/2019/03/Blog-MS-Azure-Explained.jpg",
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWeNSZhuwZiRPcf0mHV_jO1k3lFMoI2G0EsA&usqp=CAU",
+                            "https://community.connection.com/wp-content/uploads/2020/05/1095542-Benefits-of-Azure-Liz-Alton-BLOG.png"};
 
                         foreach (var divo in products)
                         {
+
+                            Random randy = new Random();
+                            int randum = randy.Next(ImgList.Count);
+                            var ImgTest = ImgList[randum];
+
+                            var SummaryTest = divo.SelectNodes("p").Last().InnerText;
+                            var LinkTest = "https://azure.microsoft.com" + divo.SelectSingleNode("h2/a").ChildAttributes("href").FirstOrDefault().Value;
+
+                            var TitleTest = divo.SelectSingleNode("h2/a").ChildAttributes("title").FirstOrDefault().Value;
                             var Blogo = new BlogStat
                             {
-                                Summary = "Microsoft Azure Blog",//divo.SelectSingleNode(".//article/p").InnerText,
-                                Title = divo.SelectSingleNode(".//h3/a").ChildAttributes("title").FirstOrDefault().Value,
-                                Link = "https://azure.microsoft.com" + divo.SelectSingleNode(".//h3/a").ChildAttributes("href").FirstOrDefault().Value,
-                                Img = "https://daxg39y63pxwu.cloudfront.net/images/blog/microsoft-azure-projects-ideas-for-beginners-for-learning/Microsoft_Azure_Projects.png"
+
+
+
+
+                                Summary = SummaryTest,
+                                Title = TitleTest,
+                                Link = LinkTest,
+                                Img = ImgTest
                             };
                             Blog.Add(Blogo);
                         }
-
                         break;
                     }
                 case 3:
@@ -186,14 +235,27 @@ namespace CrawlerApp
                         var products = htmlDocument.DocumentNode.SelectNodes("//div[@class='w-full min-h-full flex flex-col']");
                         Console.WriteLine($"The Div {products.Count} \n");
 
+                        List<string> ImgList = new List<string>()
+                        { "https://unity.com/sites/default/files/styles/cards_16_9/public/2021-08/unity-pro-card.jpeg.jpg?itok=TeJ3l-by",
+                            "https://blog-api.unity.com/sites/default/files/styles/focal_crop_ratio_3_1/public/2022-06/Blog%20header-1230x410%20%282%29.png?imwidth=1260&h=3643c662&itok=NPwXjRlB",
+                            "https://www.protocol.com/media-library/unity-logo.jpg?id=30046849&width=1200&height=600&coordinates=341%2C0%2C341%2C0",
+                            "https://www.cgdirector.com/wp-content/uploads/media/2021/10/Unity-3D-System-Requirements-Twitter-1200x675.jpg",
+                            "https://blog.codemagic.io/uploads/covers/codemagic-blog-header-mix-unity.png"};
+
                         foreach (var divo in products)
                         {
+                            Random randy = new Random();
+                            int randum = randy.Next(ImgList.Count);
+                            var ImgTest = ImgList[randum];
+
                             var Blogo = new BlogStat
                             {
                                 Summary = "Unity news and features",//divo.SelectSingleNode(".//article/p").InnerText,
                                 Title = divo.SelectSingleNode(".//a[@class='component-featured-post__link']/p").InnerText,
                                 Link = "https://blog.unity.com" + divo.SelectSingleNode(".//a[@class='component-featured-post__link']").ChildAttributes("href").FirstOrDefault().Value,
-                                Img = "https://blog-api.unity.com/sites/default/files/styles/focal_crop_ratio_3_1/public/2022-06/Blog%20header-1230x410%20%282%29.png?imwidth=1260&h=3643c662&itok=NPwXjRlB"
+                                //Img = divo.SelectSingleNode(".//a[@class='component-featured-post__link']//img").ChildAttributes("src").FirstOrDefault().Value
+                                Img = ImgTest
+
                             };
                             Blog.Add(Blogo);
                         }
@@ -264,27 +326,36 @@ namespace CrawlerApp
                     }
                 case 5:
                     {
-                        //mv mw mx l
+                        var products = htmlDocument.DocumentNode.SelectNodes("//div[@class='l eo gs']");  //l eo gs
+                        var productsimg = htmlDocument.DocumentNode.SelectNodes("//div[@class='or os ot ou ov l']");
+                    Console.WriteLine($"The Div {products.Count} \n");
 
-                        var products = htmlDocument.DocumentNode.SelectNodes("//div[@class='mv mw mx l']");
-                        Console.WriteLine($"The Div {products.Count} \n");
-
-
-                        foreach (var divo in products)
+                    Console.WriteLine($"The Div for imgs  {productsimg.Count} \n");
+                    int Counter = 0;
+                    foreach (var divo in products)
+                    {
+                        if (divo != null && Counter < productsimg.Count)
                         {
-                            var Blogo = new BlogStat
-                            {
-                                Summary = "Better programming meduim",
-                                Title = divo.SelectSingleNode(".//a[@class='au av aw ax ay az ba bb bc bd be bf bg bh bi']/div/h2").InnerText,
-                                Link = "https://medium.com" + divo.SelectSingleNode(".//div[@class='l']/a[@class='au av aw ax ay az ba bb bc bd be bf bg bh bi']").ChildAttributes("href").FirstOrDefault().Value,
-                                Img = divo.SelectSingleNode(".//div[@class='ah ai j i d']/img").ChildAttributes("src").FirstOrDefault().Value
-                            };
-                            Blog.Add(Blogo);
+                            var LinkTest = "https://medium.com" + divo.SelectSingleNode(".//div[@class='l']/a[@class='au av aw ax ay az ba bb bc bd be bf bg bh bi']").ChildAttributes("href").FirstOrDefault().Value;
+                            var TitleTest = divo.SelectSingleNode(".//div[@class='nd ne nf ng nh l']/h2").InnerText;
+                            var ImgTest = productsimg[Counter].SelectSingleNode("a/div/img").ChildAttributes("src").FirstOrDefault().Value;
 
+                                var SummaryTest = divo.SelectSingleNode(".//a[@class='au av aw ax ay az ba bb bc bd be bf bg bh bi']").InnerText;
 
+                                var Blogo = new BlogStat
+                                {
+                                    Summary = SummaryTest,
 
+                                    Title = TitleTest,
+                                    Link = LinkTest,
+                                    Img = ImgTest
+                                };
+                                Blog.Add(Blogo);
+
+                            Counter++;
                         }
-                        break;
+                    }
+                    break;
                     }
                 case 6:
                     {
@@ -316,6 +387,168 @@ namespace CrawlerApp
                             Blog.Add(Blogo);
                         }
 
+                        break;
+                    }
+                case 7:
+                    {
+
+                        var products = htmlDocument.DocumentNode.SelectNodes("//div[@class='element-item ajax-result-item ']");  //l eo gs
+
+
+
+                        int counter = 0;
+
+
+
+                        foreach (var divo in products)
+                        {
+                            if (divo != null)
+                            {
+                                var LinkTest = divo.SelectSingleNode("a").ChildAttributes("href").FirstOrDefault().Value;
+                                var TitleTest = divo.SelectSingleNode(".//h2[@class='catetemp-posttitle']").InnerText;
+                                TitleTest = TitleTest.Replace("\n", ""); //remove white space
+                                var ImgTest = divo.SelectSingleNode("a/div/img").GetAttributeValue("src", "nothing");
+                                var SummaryTest = divo.SelectSingleNode(".//div[@class='catetemp-postcnt']").InnerText;
+                                SummaryTest = SummaryTest.Replace("\n", ""); //remove white space
+
+                                var Blogo = new BlogStat
+                                {
+                                    Summary = SummaryTest,
+
+                                    Title = TitleTest,
+                                    Link = LinkTest,
+                                    Img = ImgTest
+                                };
+                                Blog.Add(Blogo);
+
+                                counter++;
+                            }
+                        }
+                        break;
+                    }
+
+                case 8:
+                    {
+
+                        var products = htmlDocument.DocumentNode.SelectNodes("//div[@class='post-feed expanded container medium']/article");  //l eo gs
+
+                        Console.WriteLine($"The Div {products.Count} \n");
+
+
+
+                        foreach (var divo in products)
+                        {
+                            if (divo != null)
+                            {
+                                var LinkTest = "https://parveensingh.com/" + divo.SelectSingleNode("a").ChildAttributes("href").FirstOrDefault().Value;
+                                var TitleTest = divo.SelectSingleNode(".//h2[@class='feed-title']").InnerText;
+
+                                TitleTest = TitleTest.Replace("\n", "").Replace("\r", ""); //remove white space
+                                var ImgTest = "https://parveensingh.com/" + divo.SelectSingleNode(".//div[@class='feed-image u-placeholder rectangle']/img").GetAttributeValue("src", "nothing");
+
+                                var SummaryText = divo.SelectSingleNode(".//div[@class='feed-excerpt']").InnerText;
+                                SummaryText = SummaryText.Replace("\n", ""); //remove white space
+                                var Blogo = new BlogStat
+                                {
+                                    Summary = SummaryText,
+
+                                    Title = TitleTest,
+                                    Link = LinkTest,
+                                    Img = ImgTest
+                                };
+                                Blog.Add(Blogo);
+
+
+                            }
+                        }
+                        break;
+                    }
+
+                case 9:
+                    {
+
+                        var products = htmlDocument.DocumentNode.SelectNodes("//div[@class='article-entry markdown-body']/div/div/div[@class='frontpage-grid']/div/div/ul/li");  //l eo gs
+
+                        Console.WriteLine($"The Div {products.Count} \n");
+
+                        //https://kubernetes.io/images/favicon.png
+                        //https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5neXBOnJNeaKmh2PwHdF_SnhLd2UOOZ4hZw&usqp=CAU
+                        //https://img-0.journaldunet.com/2sFNEidxsH0BuBYpiWYovYrY9WE=/1500x/smart/4af81639040d4827b9e6d27a27ba5cc1/ccmcms-jdn/32083536.jpeg
+                        //https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp1IYzHRlchiHhbs59dwNOWAlAg22EyJJwCw&usqp=CAU
+
+                        List<string> ImgList = new List<string>()
+                        { "https://kubernetes.io/images/favicon.png", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5neXBOnJNeaKmh2PwHdF_SnhLd2UOOZ4hZw&usqp=CAU", "https://img-0.journaldunet.com/2sFNEidxsH0BuBYpiWYovYrY9WE=/1500x/smart/4af81639040d4827b9e6d27a27ba5cc1/ccmcms-jdn/32083536.jpeg", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp1IYzHRlchiHhbs59dwNOWAlAg22EyJJwCw&usqp=CAU" };
+
+                        foreach (var divo in products)
+                        {
+                            if (divo != null)
+                            {
+                                var LinkTest = "https://iximiuz.com" + divo.SelectSingleNode("a").ChildAttributes("href").FirstOrDefault().Value;
+                                var TitleTest = divo.SelectSingleNode("a").InnerText;
+
+                                TitleTest = TitleTest.Replace("\n", "").Replace("\r", ""); //remove white space
+                                Random randy = new Random();
+                                int randum = randy.Next(ImgList.Count);
+                                var ImgTest = ImgList[randum];
+
+
+                                var Blogo = new BlogStat
+                                {
+                                    Summary = "Learning Containers, Kubernetes, and Backend Development with Ivan Velichko",
+
+                                    Title = TitleTest,
+                                    Link = LinkTest,
+                                    Img = ImgTest
+                                };
+                                Blog.Add(Blogo);
+
+
+                            }
+                        }
+                        break;
+                    }
+
+                case 10:
+                    {
+
+                        var products = htmlDocument.DocumentNode.SelectNodes("//li[@class='post-stub']");  //l eo gs
+
+                        Console.WriteLine($"The Div {products.Count} \n");
+
+                        List<string> ImgList = new List<string>()
+                        { "https://radiocrafts.com/wp-content/uploads/2019/12/cloud-services.png",
+                            "https://community.connection.com/wp-content/uploads/2020/05/1095542-Benefits-of-Azure-Liz-Alton-BLOG.png",
+                            "https://itsfoss.com/wp-content/uploads/2016/11/cloud-centric-Linux-distributions.jpg",
+                            "https://www.devteam.space/wp-content/uploads/2022/04/What-is-Cloud-Development.png" };
+
+
+                        foreach (var divo in products)
+                        {
+                            if (divo != null)
+                            {
+                                var LinkTest = "https://www.thorsten-hans.com" + divo.SelectSingleNode("a").ChildAttributes("href").FirstOrDefault().Value;
+                                var TitleTest = divo.SelectSingleNode("a/h2").InnerText;
+                                var SummryTest = divo.SelectSingleNode(".//p[@class='post-stub-description']").InnerText;
+                                TitleTest = TitleTest.Replace("\n", "").Replace("\r", ""); //remove white space
+
+                                Random randy = new Random();
+                                int randum = randy.Next(ImgList.Count);
+                                var ImgTest = ImgList[randum];
+
+
+                                var Blogo = new BlogStat
+                                {
+                                    Summary = SummryTest,
+
+                                    Title = TitleTest,
+                                    Link = LinkTest,
+                                    Img = ImgTest
+                                };
+                                Blog.Add(Blogo);
+
+
+                            }
+                        }
                         break;
                     }
             }
