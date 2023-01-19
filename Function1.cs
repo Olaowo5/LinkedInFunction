@@ -15,7 +15,7 @@ using System.Collections.Generic;
 
 /// <summary>
 /// CralwerApp Built on visual studio
-/// it uses in Azure function to get a request from Azure logic Apps
+/// An Azure function to get a request from Azure logic Apps
 /// Webcrawl from selected blog sites,
 /// return with blog link, an image, a selected text for summary and title
 /// </summary>
