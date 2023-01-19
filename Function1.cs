@@ -13,6 +13,12 @@ using System.Net.Http;
 using HtmlAgilityPack;
 using System.Collections.Generic;
 
+/// <summary>
+/// CralwerApp Built on visual studio
+/// it uses in Azure function to get a request from Azure logic Apps
+/// Webcrawl from selected blog sites,
+/// return with blog link, an image, a selected text for summary and title
+/// </summary>
 namespace CrawlerApp
 {
     public static class Function1
@@ -31,17 +37,25 @@ namespace CrawlerApp
             string FstResult = TheResult[0]; string SndResult = TheResult[1];
             string TrdResult = TheResult[2]; string FthResult = TheResult[3];
             string FifthResult = TheResult[4];
+                string SixthResult = TheResult[5];
 
             return (ActionResult)new OkObjectResult
                 (
                 new
                 {
-                    FstResult, SndResult, TrdResult, FthResult, FifthResult
+                    FstResult, SndResult, TrdResult, FthResult, FifthResult,
+                    SixthResult
                 }
                 );
 
         }
 
+        /// <summary>
+        /// persoanl random number 
+        /// return Intenger
+        /// </summary>
+        /// <param name="Mxn"></param>
+        /// <returns></returns>
         private static int RandomInt(int Mxn)
         {
             Random randy = new Random();
@@ -51,73 +65,270 @@ namespace CrawlerApp
             return RandNum;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Picker">The intger sent from random function</param>
+        /// <param name="req">Message from logic apps will be the day of the week</param>
+        /// <returns></returns>
         private static async Task<string[]> CrawlBlog(int Picker, string req)
         {
             int BlogPicker = Picker;
 
-            string[] TheResult = new string[5];
+            string[] TheResult = new string[6];
 
-            TheResult[0] = req;
+            TheResult[0] = req; //will be overwrriten
 
+            TheResult[5] = req; 
+            bool Running = true;
+            bool ItsFailed = false;
             //Get The url we want to go
             var Url = "";
 
+            //convert to integer from string
+            int DoW = int.Parse(TheResult[5]); //get the intenger
 
-            if (BlogPicker == 0)
-            {
-                Url = "https://www.serverless360.com/blog";
-            }
-            else if (BlogPicker == 1)
-            {
-                Url = "https://techgenix.com/cloud-computing/microsoft-azure/";
-            }
-            else if (BlogPicker == 2)
-            {
-                Url = "https://azure.microsoft.com/en-in/blog/?utm_source=devglan";
-            }
-            else if (BlogPicker == 3)
-            {
-                Url = "https://blog.unity.com/";
-            }
-            else if (BlogPicker == 4)
-            {
-                Url = "https://www.unrealengine.com/en-US/feed/blog"; // "https://www.sololearn.com/blog";
-            }
-            else if (BlogPicker == 5)
-            {
-                Url = "https://medium.com/better-programming";
-            }
-            else if (BlogPicker == 6)
-            {
-                Url = "https://reliance.systems/news-update/";
-            }
-            else if (BlogPicker == 7)
-            {
-                Url = "https://www.upgrad.com/blog/full-stack-development/";
-            }
-            else if (BlogPicker == 8)
-            {
-                Url = "https://parveensingh.com/";
-                Console.WriteLine("Hacker rank");
-            }
-            else if (BlogPicker == 9)
-            {
-                Url = "https://iximiuz.com/en/";
+            int NewPick = -100;
 
-            }
-            else if (BlogPicker == 10)
+            if(DoW > 0)
             {
-                Url = "https://www.thorsten-hans.com/";
+                //Now will be using the day of the week to edit
+                //if value is greater zero
+                //will overide the random number pass in the function
+                //i.e blogpicker will be overwrriten if a case is valid
+                 NewPick = RandomInt(3);
+               switch(DoW)
+                {
+
+
+                    case 1:
+                        {
+                            if(NewPick == 0)
+                            {
+                                BlogPicker = 0; //serverless
+                            }
+
+                            else if(NewPick == 1)
+                            {
+                                BlogPicker = 2; //azure
+                            }
+                            else
+                            {
+                                BlogPicker = 11; //pyhton Machine
+                            }
+
+                            break;
+                        }
+
+                    case 2:
+                        {
+                            if (NewPick == 0)
+                            {
+                                BlogPicker = 1; //technix
+                            }
+
+                            else if (NewPick == 1)
+                            {
+                                BlogPicker = 5; //meduim
+                            }
+                            else
+                            {
+                                BlogPicker = 4; //unreal
+                            }
+                            break;
+                        }
+
+                    case 3:
+                        {
+
+                            if (NewPick == 0)
+                            {
+                                BlogPicker = 3; //Unity
+                            }
+
+                            else if (NewPick == 1)
+                            {
+                                BlogPicker = 8; //parveen
+                            }
+                            else
+                            {
+                                BlogPicker = 11; //pyhton Machine
+                            }
+                            break;
+                        }
+
+                    case 4:
+                        {
+                            if (NewPick == 0)
+                            {
+                                BlogPicker = 0; //serverless
+                            }
+
+                            else if (NewPick == 1)
+                            {
+                                BlogPicker = 3; //unity
+                            }
+                            else
+                            {
+                                BlogPicker = 4; //unreal
+                            }
+                            break;
+                        }
+
+                    case 5:
+                        {
+                            if (NewPick == 0)
+                            {
+                                BlogPicker = 0; //serverless
+                            }
+
+                            else if (NewPick == 1)
+                            {
+                                BlogPicker = 1; //technix
+                            }
+                            else
+                            {
+                                BlogPicker = 9; //iximuiz
+                            }
+                            break;
+                        }
+
+                    case 6:
+                        {
+                            if (NewPick == 0)
+                            {
+                                BlogPicker = 0; //serverless
+                            }
+
+                            else if (NewPick == 1)
+                            {
+                                BlogPicker = 4; //unreal
+                            }
+                            else
+                            {
+                                BlogPicker = 11; //pyhton Machine
+                            }
+                            break;
+                        }
+
+                    case 7:
+                        {
+                            if (NewPick == 0)
+                            {
+                                BlogPicker = 5; //meduim
+                            }
+
+                            else if (NewPick == 1)
+                            {
+                                BlogPicker = 2; //azure
+                            }
+                            else
+                            {
+                                BlogPicker = 11; //pyhton Machine
+                            }
+                            break;
+                        }
+
+                    default:
+                        {
+                            TheResult[5] += " Case wasnt Passed ";
+                            break;
+                        }
+                }
             }
-            else
+
+            do
+
+
+            {
+                if (BlogPicker == 0)
+                {
+                    Url = "https://www.serverless360.com/blog";
+
+                }
+                else if (BlogPicker == 1)
+                {
+                    Url = "https://techgenix.com/cloud-computing/microsoft-azure/";
+                }
+                else if (BlogPicker == 2)
+                {
+                    Url = "https://azure.microsoft.com/en-in/blog/?utm_source=devglan";
+                }
+                else if (BlogPicker == 3)
+                {
+                    Url = "https://blog.unity.com/";
+                }
+                else if (BlogPicker == 4)
+                {
+                    Url = "https://www.unrealengine.com/en-US/feed/blog"; // "https://www.sololearn.com/blog";
+                }
+                else if (BlogPicker == 5)
+                {
+                    Url = "https://medium.com/better-programming";
+                }
+                else if (BlogPicker == 6)
+                {
+                    Url = "https://reliance.systems/news-update/";
+                }
+                else if (BlogPicker == 7)
+                {
+                    Url = "https://www.upgrad.com/blog/full-stack-development/";
+                }
+                else if (BlogPicker == 8)
+                {
+                    Url = "https://parveensingh.com/";
+                    Console.WriteLine("Hacker rank");
+                }
+                else if (BlogPicker == 9)
+                {
+                    Url = "https://iximiuz.com/en/";
+
+                }
+                else if (BlogPicker == 10)
+                {
+                    //not using this
+                    Url = "https://www.thorsten-hans.com/";
+                }
+                else if(BlogPicker == 11)
+                {
+                    //okay Machine Learning
+                    Url = "https://medium.com/coders-camp/230-machine-learning-projects-with-python-5d0c7abf8265";
+                }
+                else
+                {
+                    ItsFailed = true;
+                }
+
+                if(BlogPicker == 10 || BlogPicker == 6 || BlogPicker == 7 || BlogPicker == 12)
+                {
+                   // Running = true;
+                   //to prevent this blogs from being picked
+                    BlogPicker = RandomInt(12); //get a new picker
+                }
+                else if(ItsFailed)
+                {
+                    Running = false;
+                }
+                else
+                {
+                    Running = false;
+                }
+
+            } while (Running);
+
+
+
+            if(ItsFailed)
             {
                 TheResult[0] = "Failure";
                 TheResult[1] = "We got an issue";
-                TheResult[2] = "Fix this";
+                TheResult[2] = "Fix this BlogPicker " + BlogPicker;
                 TheResult[3] = ":D";
                 TheResult[4] = "No Image";
+                TheResult[5] = "-1";
                 return TheResult;
             }
+
 
             var httpClient = new HttpClient();
             var html = await httpClient.GetStringAsync(Url);
@@ -130,6 +341,8 @@ namespace CrawlerApp
 
             switch (BlogPicker)
             {
+                //the following cases will be used to web crawl the sites picked
+                //
                 case 0:
                     {
                         //   var divs =
@@ -551,8 +764,66 @@ namespace CrawlerApp
                         }
                         break;
                     }
+                case 11:
+                    {
+
+                        // hj
+                        var products = htmlDocument.DocumentNode.SelectNodes("//li");
+                        Console.WriteLine($"The Div {products.Count} \n");
+
+                        List<string> ImgList = new List<string>()
+                        { "https://miro.medium.com/max/1400/1*n4_NMnZmIhJ9Q9r4KDw1ew.png",
+                            "https://miro.medium.com/max/602/1*bO6lRwKN8TlPhEbxNTHhAA.png",
+                            "https://blog.eduonix.com/wp-content/uploads/2018/09/Scientific-Python-Scipy.jpg",
+                            "https://iitb.emeritus.org/iitb-certificate-program-in-machine-learning-and-ai-with-python/images/main-banner.jpg",
+                            "https://d6vdma9166ldh.cloudfront.net/media/images/265455c1-9741-4eb2-bc2f-b287a87c4eb9.jpg",
+                            "https://bs-uploads.toptal.io/blackfish-uploads/components/blog_post_page/content/cover_image_file/cover_image/955519/retina_1708x683_REDESIGN-TensorFlow-Python-Tutorial-Luke_Newsletter-b8b1c21533773f01e1ca133a12eab772.png"
+                        };
+
+                        //   var httpClient = new HttpClient();
+                        //   var html = await httpClient.GetStringAsync(Url);
+                        //   var htmlDocument = new HtmlDocument();
+
+                        var PickRandy = RandomInt(products.Count);
+
+                        var divo = products[PickRandy];
+
+                        // foreach (var divo in products)
+                        {
+                            Random randy = new Random();
+                            int randum = randy.Next(ImgList.Count);
+                            var ImgTest = ImgList[randum];
+
+                            var NewHtml = divo.SelectSingleNode(".//a").ChildAttributes("href").FirstOrDefault().Value;
+                            var NewText = divo.SelectSingleNode(".//a").InnerText;
+
+
+                            html = await httpClient.GetStringAsync(NewHtml);
+                            var htmlDocu = new HtmlDocument();
+                            // kl
+                            htmlDocu.LoadHtml(html);
+                            var Prod = htmlDocu.DocumentNode.SelectSingleNode("//div[@class='entry-content']/p");
+
+                            var Mvo = Prod.InnerText;
+
+                            var Autho = htmlDocu.DocumentNode.SelectSingleNode("//a[@class='ct-meta-element-author']/span").InnerText;
+
+                            var Blogo = new BlogStat
+                            {
+                                Summary = "Article by  " + Autho + "\n" + Mvo,
+                                Title = NewText,
+                                Link = NewHtml,
+                                //tried to get from img src but woulkd return in base 64
+                                Img = ImgTest
+                            };
+                            Blog.Add(Blogo);
+                        }
+                        //for the Madchine Learning
+                        break;
+                    }
             }
 
+            //cant remeber what this part was
             int BlogPick = 0;
 
             if (Blog != null && Blog.Count > 1)
@@ -566,18 +837,21 @@ namespace CrawlerApp
             TheResult[0] = "Success"; TheResult[1] = Blog[BlogPick].Title; TheResult[2] = Blog[BlogPick].Summary;
             TheResult[3] = Blog[BlogPick].Link; TheResult[4] = Blog[BlogPick].Img;
 
+            TheResult[5] += " the pick was "+ NewPick;
+
             return TheResult;
         }
     }
 
     public class BlogStat
     {
+        //the link of the blog to post on Linkedin
         public string Link { get; set; }
-
+        //the summary to post on linkedin
         public string Summary { get; set; }
-
+        //the title to post on Linkedin
         public string Title { get; set; }
-
+        //the image link to post on Linekdin
         public string Img { get; set; }
     }
 
