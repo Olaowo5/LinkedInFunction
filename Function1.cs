@@ -124,7 +124,7 @@ namespace CrawlerApp
                         {
                             if (NewPick == 0)
                             {
-                                BlogPicker = 1; //technix
+                                BlogPicker = 5; //technix
                             }
 
                             else if (NewPick == 1)
@@ -184,7 +184,7 @@ namespace CrawlerApp
 
                             else if (NewPick == 1)
                             {
-                                BlogPicker = 1; //technix
+                                BlogPicker = 5; //technix
                             }
                             else
                             {
@@ -336,6 +336,18 @@ namespace CrawlerApp
 
             htmlDocument.LoadHtml(html);
 
+            //Will be used to remove By from the autho name in Unity
+            string RemoveBy(string str)
+            {
+                if (str.Contains("By"))
+                {
+                    String tempWord = "By";
+                    str = str.Replace(tempWord, "");
+                }
+
+                return str;
+            }
+
             //a list to add all availabel blogs we found
             var Blog = new List<BlogStat>();
 
@@ -368,9 +380,10 @@ namespace CrawlerApp
                             int randum = randy.Next(ImgList.Count);
                             var ImgTest = ImgList[randum];
 
+                            var Autho = divo.SelectNodes(".//p[@class='text-small']/span")[1].InnerText;
                             var Blogo = new BlogStat
                             {
-                                Summary = divo.SelectSingleNode(".//p[@class='pb-3']").InnerText,
+                                Summary = "Article by  " + Autho + "\n" + divo.SelectSingleNode(".//p[@class='pb-3']").InnerText,
                                 Title = divo.SelectSingleNode(".//h4/a").ChildAttributes("title").FirstOrDefault().Value,
                                 Link = divo.SelectSingleNode(".//h4/a").ChildAttributes("href").FirstOrDefault().Value,
                                 //tried to get from img src but woulkd return in base 64
@@ -379,20 +392,37 @@ namespace CrawlerApp
                             Blog.Add(Blogo);
                         }
 
-                   
+                        /*
+                        foreach (var divo in divs)
+                        {
+                            var Blogo = new BlogStat
+                            {
+                               // Summary = divo.Descendants("p").LastOrDefault().InnerText,
+                               //Summary =divo.SelectNodes
+                                Title = divo.Descendants("a").FirstOrDefault().ChildAttributes("title").FirstOrDefault().Value,
+
+                                Link = divo.Descendants("a").FirstOrDefault().ChildAttributes("href").FirstOrDefault().Value,
+                            };
+
+                            Blog.Add(Blogo);
+                        }
+                        */
 
                         break;
                     }
                 case 1:
                     {
+                        //something wrng with 1 think they added a security layer
                         var products = htmlDocument.DocumentNode.SelectNodes("//div[@class='post-content ast-grid-common-col']");
-                       // Console.WriteLine($"The Div {products.Count} \n");
+                        Console.WriteLine($"The Div {products.Count} \n");
 
                         foreach (var divo in products)
                         {
+
+                            var Autho = divo.SelectSingleNode(".//span[@class='author-name']").InnerText;
                             var Blogo = new BlogStat
                             {
-                                Summary = divo.SelectSingleNode(".//div[@class='entry-content clear']/p").InnerText,
+                                Summary = "Article by: " + Autho + "\n" + divo.SelectSingleNode(".//div[@class='entry-content clear']/p").InnerText,
                                 Title = divo.SelectSingleNode(".//h2/a").InnerText,
                                 Link = divo.SelectSingleNode(".//h2/a").ChildAttributes("href").FirstOrDefault().Value,
                                 Img = divo.SelectSingleNode(".//div[@class='post-thumb-img-content post-thumb']/a/img").ChildAttributes("src").FirstOrDefault().Value,
@@ -427,25 +457,28 @@ namespace CrawlerApp
                             var LinkTest = "https://azure.microsoft.com" + divo.SelectSingleNode("h2/a").ChildAttributes("href").FirstOrDefault().Value;
 
                             var TitleTest = divo.SelectSingleNode("h2/a").ChildAttributes("title").FirstOrDefault().Value;
+
+                            var Autho = divo.SelectSingleNode(".//div[@class='name with-position']/a").InnerText;
                             var Blogo = new BlogStat
                             {
 
 
+                                // contine here
 
-
-                                Summary = SummaryTest,
+                                Summary = "Article By " + Autho + "\n" + SummaryTest,
                                 Title = TitleTest,
                                 Link = LinkTest,
                                 Img = ImgTest
                             };
                             Blog.Add(Blogo);
                         }
+
                         break;
                     }
                 case 3:
                     {
                         //w-full min-h-full flex flex-col
-                        var products = htmlDocument.DocumentNode.SelectNodes("//div[@class='w-full min-h-full flex flex-col']");
+                        var products = htmlDocument.DocumentNode.SelectNodes("//div[@class='border-b border-cheap pb-4 w-full min-h-full flex flex-col']");   //("//div[@class='w-full min-h-full flex flex-col']");
                         Console.WriteLine($"The Div {products.Count} \n");
 
                         List<string> ImgList = new List<string>()
@@ -459,13 +492,21 @@ namespace CrawlerApp
                         {
                             Random randy = new Random();
                             int randum = randy.Next(ImgList.Count);
-                            var ImgTest = ImgList[randum];
+
+
+                            var Autho = divo.SelectSingleNode(".//span[@class='inline-flex items-center']").InnerText;
+                            Autho = RemoveBy(Autho);
+                            var Title = divo.SelectSingleNode(".//p[@class='b-line-clamp-3']").InnerText;
+                            var Link = "https://blog.unity.com" + divo.SelectSingleNode(".//div[@class='relative my-3']/a").ChildAttributes("href").FirstOrDefault().Value;
+                            var imgbridge = divo.SelectSingleNode(".//div[@class='relative my-3']/a");
+
+                            var ImgTest = imgbridge.SelectNodes(".//img").ElementAtOrDefault(1).ChildAttributes("srcset").ElementAtOrDefault(0).Value; //ImgList[randum];
 
                             var Blogo = new BlogStat
                             {
-                                Summary = "Unity news and features",//divo.SelectSingleNode(".//article/p").InnerText,
-                                Title = divo.SelectSingleNode(".//a[@class='component-featured-post__link']/p").InnerText,
-                                Link = "https://blog.unity.com" + divo.SelectSingleNode(".//a[@class='component-featured-post__link']").ChildAttributes("href").FirstOrDefault().Value,
+                                Summary = "Article By " + Autho + "\n" + "Unity news and features from Unity Blog",//divo.SelectSingleNode(".//article/p").InnerText,
+                                Title = Title,
+                                Link = Link,
                                 //Img = divo.SelectSingleNode(".//a[@class='component-featured-post__link']//img").ChildAttributes("src").FirstOrDefault().Value
                                 Img = ImgTest
 
@@ -477,57 +518,46 @@ namespace CrawlerApp
                     }
                 case 4:
                     {
-                      
-
-                       // Console.WriteLine("got em");
+                       
+                        
                         // FeedCardcontainer__FeedCardWrapper - sc - kdxk6b - 0 eQiFpl
                         //Changing to unreal
 
 
-                        var products = htmlDocument.DocumentNode.SelectNodes("//div[@class='FeedCardcontainer__FeedCardWrapper-sc-kdxk6b-0 eQiFpl']");
-                        Console.WriteLine($"The Div {products.Count} \n");
 
-                        //---- This will be used to get a random Image
-                        var ImgName = htmlDocument.DocumentNode.SelectNodes(".//div[@class='image-wrapper']");
-
-                        string ImgSrc = "https://cdn2.unrealengine.com/m2m-02-1920x1080-313b6089e0e7.jpg";
-
-                        List<string> ImgList = new List<string>();
-
-                        if (ImgName != null)
-                        {
-                            foreach (var dimg in ImgName)
-                            {
-
-                                var Sup = dimg.SelectSingleNode(".//img").ChildAttributes("src").FirstOrDefault().Value;
-                                if (Sup != null || !string.IsNullOrEmpty(Sup) || !string.IsNullOrWhiteSpace(Sup))
-                                    ImgList.Add(Sup);
-                            }
-                        }
-
-
-                        if (ImgList.Count > 1)
-                        {
-                            int randy = RandomInt(ImgList.Count);
-
-                            ImgSrc = ImgList[randy];
-                        }
-
-
-
-                        var Splitted = ImgSrc.Split("?");
-                        ImgSrc = Splitted[0];
-
-                        //---- This will be used to get a random Image
-
+                        var products = htmlDocument.DocumentNode.SelectNodes("//div[@class='SmallFeedCard__SmallFeedCardWrapper-sc-6x1tbj-0 fOBZeL feed-item']");
+                        var prodimg = htmlDocument.DocumentNode.SelectNodes("//div[@class='image-wrapper']");
+                        //Console.WriteLine($"The Div {products.Count}  {prodimg.Count} \n");
+                       
+                        //unreal
+                        // var div = doc.DocumentNode.SelectSingleNode("//div[contains(@class,'searched-img')]");
+                        //var url = Regex.Match(div.GetAttributeValue("style", ""), @"(?<=url\()(.*)(?=\))").Groups[1].Value;
                         foreach (var divo in products)
                         {
+                            var lastKid = divo.LastChild;
+                            var NewImg = divo.LastChild.SelectNodes(".//div[@class='image-wrapper']");
+
+                            var Sumnews = lastKid.InnerText;
+                            Sumnews = Sumnews.Substring(0, Sumnews.IndexOf("News")); // summary
+
+                            string src = NewImg[0].InnerHtml.Substring(NewImg[0].InnerHtml.IndexOf("src=") + 5);
+
+                            // Remove everything after the src value (the end of the img tag). 
+                            src = src.Substring(0, src.IndexOf("\""));
+                            src = src.Substring(0, src.IndexOf("?resize"));
+
+                            var LinkUrl = lastKid.SelectSingleNode(".//a").ChildAttributes("href").FirstOrDefault().Value;
+
+
                             var Blogo = new BlogStat
                             {
                                 Summary = divo.LastChild.InnerText,//divo.SelectSingleNode(".//span[@class='SimpleLink__SimpleLinkWrap-sc-f8kw59-0 bOtKnb simple-link-wrap']//*[self::div or self::p]").InnerText,
-                                Title = "Unreal Engine", //divo.FirstChild.InnerText.Trim('\r', '\n', '\t'),//"title",//divo.SelectSingleNode(".//a[@class='simple']/div").InnerText,
-                                Link = "https://www.unrealengine.com" + divo.SelectSingleNode(".//span[@class='SimpleLink__SimpleLinkWrap-sc-f8kw59-0 bOtKnb simple-link-wrap']/a").ChildAttributes("href").FirstOrDefault().Value,
-                                Img = ImgSrc
+                                Title = "Unreal Engine Announcements", //divo.FirstChild.InnerText.Trim('\r', '\n', '\t'),//"title",//divo.SelectSingleNode(".//a[@class='simple']/div").InnerText,
+                                Link = "https://www.unrealengine.com" + LinkUrl,
+
+
+                                Img = src//NewImg//ImgSrc
+
                             };
                             Blog.Add(Blogo);
 
@@ -539,21 +569,30 @@ namespace CrawlerApp
                     }
                 case 5:
                     {
-                        var products = htmlDocument.DocumentNode.SelectNodes("//div[@class='l eo gs']");  //l eo gs
-                        var productsimg = htmlDocument.DocumentNode.SelectNodes("//div[@class='or os ot ou ov l']");
-                    Console.WriteLine($"The Div {products.Count} \n");
+                        //mv mw mx l
 
-                    Console.WriteLine($"The Div for imgs  {productsimg.Count} \n");
-                    int Counter = 0;
-                    foreach (var divo in products)
-                    {
-                        if (divo != null && Counter < productsimg.Count)
+                        var products = htmlDocument.DocumentNode.SelectNodes("//article");  //l eo gs
+                                                                                            // var productsimg = htmlDocument.DocumentNode.SelectNodes("//div[@class='or os ot ou ov l']");
+                      
+
+                        // Console.WriteLine($"The Div for imgs  {productsimg.Count} \n");
+                        int Counter = 0;
+                        foreach (var divo in products)
                         {
-                            var LinkTest = "https://medium.com" + divo.SelectSingleNode(".//div[@class='l']/a[@class='au av aw ax ay az ba bb bc bd be bf bg bh bi']").ChildAttributes("href").FirstOrDefault().Value;
-                            var TitleTest = divo.SelectSingleNode(".//div[@class='nd ne nf ng nh l']/h2").InnerText;
-                            var ImgTest = productsimg[Counter].SelectSingleNode("a/div/img").ChildAttributes("src").FirstOrDefault().Value;
+                            // if (divo != null )
+                            {
 
-                                var SummaryTest = divo.SelectSingleNode(".//a[@class='au av aw ax ay az ba bb bc bd be bf bg bh bi']").InnerText;
+                                var Autho = divo.SelectSingleNode(".//div[@class='ab q']/p").InnerText; //author
+
+                                var LinkTest = "https://medium.com" + divo.SelectSingleNode(".//div[@class='l']/a[@class='ae af ag ah ai aj ak al am an ao ap aq ar as']").ChildAttributes("href").FirstOrDefault().Value;
+                                LinkTest = LinkTest.Substring(0, LinkTest.IndexOf("?"));
+
+                                var TitleTest = divo.SelectSingleNode(".//div[@class='me mf mg mh mi l']/h2").InnerText;
+                                var ImgTest = divo.SelectSingleNode(".//div[@class='ab']/div[@class='on oo op oq or l']").InnerHtml;
+
+                                string src = ImgTest.Substring(ImgTest.IndexOf("src=") + 5);
+                                src = src.Substring(0, src.IndexOf("\""));
+                                var SummaryTest = "Article By  " + Autho + "\n" + " " + divo.SelectSingleNode(".//div[@class='h k nb cx db']").InnerText;
 
                                 var Blogo = new BlogStat
                                 {
@@ -561,14 +600,14 @@ namespace CrawlerApp
 
                                     Title = TitleTest,
                                     Link = LinkTest,
-                                    Img = ImgTest
+                                    Img = src// ImgTest
                                 };
                                 Blog.Add(Blogo);
 
-                            Counter++;
+                                Counter++;
+                            }
                         }
-                    }
-                    break;
+                        break;
                     }
                 case 6:
                     {
