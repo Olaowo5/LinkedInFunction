@@ -582,18 +582,19 @@ namespace CrawlerApp
                             // if (divo != null )
                             {
 
-                                var Autho = divo.SelectSingleNode(".//div[@class='ab q']/p").InnerText; //author
+                                var Autho = divo.SelectSingleNode(".//div[@class='ab q']/a/p").InnerText; //author
 
-                                var LinkTest = "https://medium.com" + divo.SelectSingleNode(".//div[@class='l']/a[@class='ae af ag ah ai aj ak al am an ao ap aq ar as']").ChildAttributes("href").FirstOrDefault().Value;
+                                var LinkTest = "https://betterprogramming.pub" + divo.SelectSingleNode(".//div[@class='lr l']//a[@class='af ag ah ai aj ak al am an ao ap aq ar as at']").ChildAttributes("href").FirstOrDefault().Value;
                                 LinkTest = LinkTest.Substring(0, LinkTest.IndexOf("?"));
 
-                                var TitleTest = divo.SelectSingleNode(".//div[@class='me mf mg mh mi l']/h2").InnerText;
-                                var ImgTest = divo.SelectSingleNode(".//div[@class='ab']/div[@class='on oo op oq or l']").InnerHtml;
+                                var TitleTest = divo.SelectSingleNode(".//div[@class='lw lx ly lz ma l']/h2").InnerText;
+                                var ImgTest = divo.SelectSingleNode(".//a[@class='af ag ah ai aj ak al am an ao ap aq ar as at']/div[@class='or os j i d']").InnerHtml;
 
                                 string src = ImgTest.Substring(ImgTest.IndexOf("src=") + 5);
                                 src = src.Substring(0, src.IndexOf("\""));
-                                var SummaryTest = "Article By  " + Autho + "\n" + " " + divo.SelectSingleNode(".//div[@class='h k nb cx db']").InnerText;
+                                var SummaryTest = "Article By  " + Autho + "\n" + " " + divo.SelectSingleNode(".//div[@class='h k my cy dc']/p").InnerText;
 
+                                //no summary
                                 var Blogo = new BlogStat
                                 {
                                     Summary = SummaryTest,
